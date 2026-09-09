@@ -23,32 +23,50 @@ def buscar_preco(app_id):
     game = {"jogo": nome, "preco": valor}
     return game
 
+
 app_ids = [413150, 730, 570]
 
-try:
-    with open("historico.json", "r") as arquivo:
-        historico = json.load(arquivo)
-except FileNotFoundError:
-    historico = []
+
+def carregar_historico():
+    try:
+        with open("historico.json", "r") as arquivo:
+            historico = json.load(arquivo)
+    except FileNotFoundError:
+        historico = []
+    return historico
+
+
+historico = carregar_historico()
+
+
+def buscar_anterior(historico, nome_jogo):
+    anterior = None
+    for registro_salvo in historico:
+        if registro_salvo["jogo"] == nome_jogo:
+            anterior = registro_salvo
+    return anterior
+
+
+def comparar_precos(anterior, resultado):
+    if anterior is not None and resultado["preco"] < anterior["preco"]:
+        print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
+    elif anterior is not None and resultado["preco"] > anterior["preco"]:
+        print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
+    elif anterior is not None:
+        print("Preço sem alteração.")
+
 
 for app_id in app_ids:
     resultado = buscar_preco(app_id)
     if resultado is not None:
-        anterior = None
-        for registro_salvo in historico:
-            if registro_salvo["jogo"] == resultado["jogo"]:
-                anterior = registro_salvo
+        anterior = buscar_anterior(historico, resultado["jogo"])
         print("Anterior encontrado: ", anterior)
-        if anterior is not None and resultado["preco"] < anterior["preco"]:
-            print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
-        elif anterior is not None and resultado["preco"] > anterior["preco"]:
-            print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
-        elif anterior is not None:
-            print("Preço sem alteração.")
-
-
+        comparar_precos(anterior, resultado)
         historico.append(resultado)
 
 
-with open("historico.json", "w") as arquivo:
-    json.dump(historico, arquivo)
+def salvar_historico(historico):
+    with open("historico.json", "w") as arquivo:
+        json.dump(historico, arquivo)
+
+salvar_historico(historico)

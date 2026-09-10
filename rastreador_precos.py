@@ -4,8 +4,8 @@ import urllib.parse
 
 
 def buscar_preco(app_id):
-    parametros = {"appids": app_id, "cc": "br", "l": "portuguese"}
-    query = urllib.parse.urlencode(parametros)
+    parametros_precos = {"appids": app_id, "cc": "br", "l": "portuguese"}
+    query = urllib.parse.urlencode(parametros_precos)
     resposta = urllib.request.urlopen("https://store.steampowered.com/api/appdetails?" + query)
     conteudo_bruto = resposta.read()
     decodificado = conteudo_bruto.decode("utf-8")
@@ -57,14 +57,32 @@ def buscar_anterior(historico, nome_jogo):
             anterior = registro_salvo
     return anterior
 
+def carregar_config_telegram():
+    with open("config_telegram.json", "r") as arquivo:
+        config_telegram = json.load(arquivo)
+    return config_telegram
+
+
+def enviar_notificacao(mensagem):
+    codigo = carregar_config_telegram()
+    token = codigo["token"]
+    chat_id = codigo["chat_id"]
+    url_base = "https://api.telegram.org/bot" + token + "/sendMessage?"
+    parametros_mensagem = {"chat_id": chat_id, "text": mensagem}
+    query_mensagem = urllib.parse.urlencode(parametros_mensagem)
+    url_final = url_base + query_mensagem
+    urllib.request.urlopen(url_final)
+
 
 def comparar_precos(anterior, resultado):
     if anterior is not None and resultado["preco"] < anterior["preco"]:
-        print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
     elif anterior is not None and resultado["preco"] > anterior["preco"]:
-        print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       enviar_notificacao(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
     elif anterior is not None:
-        print("Preço sem alteração.")
+        print(f"Preço de {resultado['jogo']} sem alteração. Preço atual: R$ {resultado['preco']}")
 
 
 for app_id in app_ids:
@@ -81,3 +99,4 @@ def salvar_historico(historico):
         json.dump(historico, arquivo)
 
 salvar_historico(historico)
+

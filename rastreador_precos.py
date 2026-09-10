@@ -57,6 +57,7 @@ def buscar_anterior(historico, nome_jogo):
             anterior = registro_salvo
     return anterior
 
+
 def carregar_config_telegram():
     with open("config_telegram.json", "r") as arquivo:
         config_telegram = json.load(arquivo)
@@ -74,10 +75,20 @@ def enviar_notificacao(mensagem):
     urllib.request.urlopen(url_final)
 
 
-def comparar_precos(anterior, resultado):
+def buscar_menor_preco(historico, nome_jogo):
+    menor_preco = None
+    for registro_salvo in historico:
+        if registro_salvo["jogo"] == nome_jogo:
+            preco_atual = registro_salvo["preco"]
+            if menor_preco is None or preco_atual < menor_preco:
+                menor_preco = preco_atual
+    return menor_preco
+
+
+def comparar_precos(anterior, resultado, menor_preco):
     if anterior is not None and resultado["preco"] < anterior["preco"]:
-       enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
-       print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
+       print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
     elif anterior is not None and resultado["preco"] > anterior["preco"]:
        enviar_notificacao(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
        print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
@@ -89,14 +100,17 @@ for app_id in app_ids:
     resultado = buscar_preco(app_id)
     if resultado is not None:
         anterior = buscar_anterior(historico, resultado["jogo"])
+        menor_preco = buscar_menor_preco(historico, resultado["jogo"])
         print("Anterior encontrado: ", anterior)
-        comparar_precos(anterior, resultado)
+        print("Menor preço já visto: ", menor_preco)
+        comparar_precos(anterior, resultado, menor_preco)
         historico.append(resultado)
 
 
 def salvar_historico(historico):
     with open("historico.json", "w") as arquivo:
         json.dump(historico, arquivo)
+
 
 salvar_historico(historico)
 

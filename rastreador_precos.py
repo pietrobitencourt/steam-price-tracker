@@ -2,6 +2,7 @@ import urllib.request
 import json
 import urllib.parse
 
+
 def buscar_preco(app_id):
     parametros = {"appids": app_id, "cc": "br", "l": "portuguese"}
     query = urllib.parse.urlencode(parametros)
@@ -24,7 +25,17 @@ def buscar_preco(app_id):
     return game
 
 
-app_ids = [413150, 730, 570]
+def carregar_jogos_monitorados():
+    try:
+        with open("jogos_monitorados.json", "r") as arquivo:
+            jogos_monitorados = json.load(arquivo)
+    except FileNotFoundError:
+        print("Arquivo de configuração não encontrado, usando lista vazia.")
+        jogos_monitorados = []
+    return jogos_monitorados
+
+
+app_ids = carregar_jogos_monitorados()
 
 
 def carregar_historico():

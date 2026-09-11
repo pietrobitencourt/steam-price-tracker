@@ -1,6 +1,15 @@
 import urllib.request
 import json
 import urllib.parse
+import logging
+
+
+logging.basicConfig(
+    filename="radar.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    encoding="utf-8"
+)
 
 
 def buscar_preco(app_id):
@@ -16,7 +25,7 @@ def buscar_preco(app_id):
     nome = dados.get("name")
     preco = dados.get("price_overview")
     if preco is None:
-        print("Sem preço disponível ou o jogo é gratuíto.")
+        logging.warning("Sem preço disponível ou o jogo é gratuíto.")
         return
     
     valor_final = preco.get("final")
@@ -30,7 +39,7 @@ def carregar_jogos_monitorados():
         with open("jogos_monitorados.json", "r") as arquivo:
             jogos_monitorados = json.load(arquivo)
     except FileNotFoundError:
-        print("Arquivo de configuração não encontrado, usando lista vazia.")
+        logging.warning("Arquivo de configuração não encontrado, usando lista vazia.")
         jogos_monitorados = []
     return jogos_monitorados
 
@@ -88,12 +97,12 @@ def buscar_menor_preco(historico, nome_jogo):
 def comparar_precos(anterior, resultado, menor_preco):
     if anterior is not None and resultado["preco"] < anterior["preco"]:
        enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
-       print(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
+       logging.info(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
     elif anterior is not None and resultado["preco"] > anterior["preco"]:
        enviar_notificacao(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
-       print(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
+       logging.info(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
     elif anterior is not None:
-        print(f"Preço de {resultado['jogo']} sem alteração. Preço atual: R$ {resultado['preco']}")
+        logging.info(f"Preço de {resultado['jogo']} sem alteração. Preço atual: R$ {resultado['preco']}")
 
 
 for app_id in app_ids:
@@ -101,8 +110,8 @@ for app_id in app_ids:
     if resultado is not None:
         anterior = buscar_anterior(historico, resultado["jogo"])
         menor_preco = buscar_menor_preco(historico, resultado["jogo"])
-        print("Anterior encontrado: ", anterior)
-        print("Menor preço já visto: ", menor_preco)
+        logging.info(f"Anterior encontrado: {anterior}")
+        logging.info(f"Menor preço já visto: {menor_preco}")
         comparar_precos(anterior, resultado, menor_preco)
         historico.append(resultado)
 

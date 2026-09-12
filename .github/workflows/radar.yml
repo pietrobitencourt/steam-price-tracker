@@ -1,0 +1,11 @@
+name: Teste do Radar
+
+on:
+  workflow_dispatch:
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dizer oi
+        run: echo "Funcionou!"

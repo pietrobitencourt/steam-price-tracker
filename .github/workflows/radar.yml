@@ -1,4 +1,6 @@
 name: Radar de Preços
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:
@@ -21,3 +23,14 @@ jobs:
 
       - name: Rodar o rastreador
         run: python rastreador_precos.py
+        
+      - name: Configurar identidade do Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Salvar histórico atualizado
+        run: |
+          git add historico.json
+          git commit -m "Atualiza histórico de preços" || echo "Nada para commitar"
+          git push

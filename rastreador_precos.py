@@ -52,7 +52,7 @@ def carregar_historico():
         with open("historico.json", "r") as arquivo:
             historico = json.load(arquivo)
     except FileNotFoundError:
-        historico = []
+        historico = {}
     return historico
 
 
@@ -60,11 +60,17 @@ historico = carregar_historico()
 
 
 def buscar_anterior(historico, nome_jogo):
-    anterior = None
-    for registro_salvo in historico:
-        if registro_salvo["jogo"] == nome_jogo:
-            anterior = registro_salvo
-    return anterior
+    lista_precos = historico.get(nome_jogo, [])
+    if lista_precos:
+        return lista_precos[-1]
+    return None
+
+
+def buscar_menor_preco(historico, nome_jogo):
+    lista_precos = historico.get(nome_jogo, [])
+    if lista_precos:
+        return min(lista_precos)
+    return None
 
 
 def carregar_config_telegram():
@@ -84,23 +90,13 @@ def enviar_notificacao(mensagem):
     urllib.request.urlopen(url_final)
 
 
-def buscar_menor_preco(historico, nome_jogo):
-    menor_preco = None
-    for registro_salvo in historico:
-        if registro_salvo["jogo"] == nome_jogo:
-            preco_atual = registro_salvo["preco"]
-            if menor_preco is None or preco_atual < menor_preco:
-                menor_preco = preco_atual
-    return menor_preco
-
-
 def comparar_precos(anterior, resultado, menor_preco):
-    if anterior is not None and resultado["preco"] < anterior["preco"]:
-       enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
-       logging.info(f"{resultado['jogo']} teve queda: R$ {anterior['preco']} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
-    elif anterior is not None and resultado["preco"] > anterior["preco"]:
-       enviar_notificacao(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
-       logging.info(f"{resultado['jogo']} teve aumento: R$ {anterior['preco']} → R$ {resultado['preco']}")
+    if anterior is not None and resultado["preco"] < anterior:
+       enviar_notificacao(f"{resultado['jogo']} teve queda: R$ {anterior} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
+       logging.info(f"{resultado['jogo']} teve queda: R$ {anterior} → R$ {resultado['preco']} (menor preço já visto: R$ {menor_preco})")
+    elif anterior is not None and resultado["preco"] > anterior:
+       enviar_notificacao(f"{resultado['jogo']} teve aumento: R$ {anterior} → R$ {resultado['preco']}")
+       logging.info(f"{resultado['jogo']} teve aumento: R$ {anterior} → R$ {resultado['preco']}")
     elif anterior is not None:
         logging.info(f"Preço de {resultado['jogo']} sem alteração. Preço atual: R$ {resultado['preco']}")
 
@@ -113,7 +109,9 @@ for app_id in app_ids:
         logging.info(f"Anterior encontrado: {anterior}")
         logging.info(f"Menor preço já visto: {menor_preco}")
         comparar_precos(anterior, resultado, menor_preco)
-        historico.append(resultado)
+        if resultado["jogo"] not in historico:
+            historico[resultado["jogo"]] = []
+        historico[resultado["jogo"]].append(resultado["preco"])
 
 
 def salvar_historico(historico):

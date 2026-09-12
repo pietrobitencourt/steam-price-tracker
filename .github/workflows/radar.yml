@@ -7,6 +7,9 @@ jobs:
   rodar-radar:
     runs-on: ubuntu-latest
     steps:
+      - name: Dizer oi
+        run: echo "Funcionou!"
+
       - name: Baixar o código do repositório
         uses: actions/checkout@v4
 

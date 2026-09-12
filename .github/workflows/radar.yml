@@ -1,23 +1,11 @@
-name: Radar de Preços
+name: Teste do Radar
 
 on:
   workflow_dispatch:
 
 jobs:
-  rodar-radar:
+  teste:
     runs-on: ubuntu-latest
     steps:
-      - name: Baixar o código do repositório
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Criar config_telegram.json a partir dos Secrets
-        run: |
-          echo '{"token": "${{ secrets.TELEGRAM_TOKEN }}", "chat_id": ${{ secrets.TELEGRAM_CHAT_ID }}}' > config_telegram.json
-
-      - name: Rodar o rastreador
-        run: python rastreador_precos.py
+      - name: Dizer oi
+        run: echo "Funcionou!"

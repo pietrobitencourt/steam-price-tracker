@@ -10,6 +10,7 @@
 ![Telegram Bot](https://img.shields.io/badge/Telegram-Bot%20API-26A5E4?logo=telegram&logoColor=white)
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 ![Stdlib only](https://img.shields.io/badge/dependencies-standard%20library%20only-success)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 </div>
 

@@ -10,7 +10,6 @@
 ![Telegram Bot](https://img.shields.io/badge/Telegram-Bot%20API-26A5E4?logo=telegram&logoColor=white)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 ![Stdlib only](https://img.shields.io/badge/depend%C3%AAncias-apenas%20biblioteca%20padr%C3%A3o-success)
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 </div>
 
@@ -85,7 +84,7 @@ python rastreador_precos.py
 - [x] Menor preço histórico
 - [x] Logging persistente
 - [x] Histórico reestruturado por jogo
-- [ ] Automação de execução (rodar sozinho periodicamente)
+- [x] Automação de execução (rodar sozinho periodicamente, via GitHub Actions)
 - [ ] Menu local interativo para adicionar/remover jogos
 - [ ] Comandos via chat do Telegram (adicionar jogos direto pelo bot)
 

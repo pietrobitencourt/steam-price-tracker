@@ -98,6 +98,10 @@ The Telegram notification, detecting a price drop:
 
 ![Telegram notification](docs/telegram-notificacao.png)
 
+The automation running on its own in the cloud, via GitHub Actions:
+
+![Automated run on GitHub Actions](docs/github-actions-automacao.png)
+
 ## 👤 Author
 
 **Piêtro Bitencourt Nunes**

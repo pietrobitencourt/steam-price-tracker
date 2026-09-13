@@ -98,6 +98,10 @@ A notificação no Telegram, detectando uma queda de preço:
 
 ![Notificação no Telegram](docs/telegram-notificacao.png)
 
+A automação rodando sozinha na nuvem, via GitHub Actions:
+
+![Execução automática no GitHub Actions](docs/github-actions-automacao.png)
+
 ## 👤 Autor
 
 **Piêtro Bitencourt Nunes**

@@ -85,8 +85,8 @@ python rastreador_precos.py
 - [x] Logging persistente
 - [x] Histórico reestruturado por jogo
 - [x] Automação de execução (rodar sozinho periodicamente, via GitHub Actions)
-- [ ] Menu local interativo para adicionar/remover jogos
-- [ ] Comandos via chat do Telegram (adicionar jogos direto pelo bot)
+- [x] Menu local interativo para adicionar/remover jogos
+- [x] Comandos via chat do Telegram (adicionar, remover e listar jogos direto pelo bot)
 
 ## 📸 Demonstração
 
@@ -100,5 +100,5 @@ A notificação no Telegram, detectando uma queda de preço:
 
 ## 👤 Autor
 
-**Piêtro Bitencourt Nunes**
+**Pietro Bitencourt**
 [github.com/pietrobitencourt](https://github.com/pietrobitencourt)

@@ -85,8 +85,8 @@ python rastreador_precos.py
 - [x] Persistent logging
 - [x] History restructured per game
 - [x] Automated scheduled execution (via GitHub Actions)
-- [ ] Interactive local menu to add/remove games
-- [ ] Telegram chat commands (add games directly via the bot)
+- [x] Interactive local menu to add/remove games
+- [x] Telegram chat commands (add, remove, and list games directly via the bot)
 
 ## 📸 Demo
 
@@ -100,5 +100,5 @@ The Telegram notification, detecting a price drop:
 
 ## 👤 Author
 
-**Piêtro Bitencourt Nunes**
+**Pietro Bitencourt**
 [github.com/pietrobitencourt](https://github.com/pietrobitencourt)

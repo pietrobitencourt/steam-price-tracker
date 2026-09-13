@@ -140,8 +140,97 @@ def salvar_jogos_monitorados(app_ids):
         json.dump(app_ids, arquivo)
 
 
+def carregar_offset():
+    try:
+        with open("telegram_offset.json", "r") as arquivo:
+            telegram_offset = json.load(arquivo)
+    except FileNotFoundError:
+        telegram_offset = {"ultimo_update_id": 0}
+    return telegram_offset
+
+
+def salvar_offset(offset):
+    with open("telegram_offset.json", "w") as arquivo:
+        json.dump(offset, arquivo)
+
+
+def buscar_mensagens_novas():
+    codigo = carregar_config_telegram()
+    token = codigo["token"]
+    offset = carregar_offset()
+
+    url_base = "https://api.telegram.org/bot" + token + "/getUpdates?"
+    parametros = {"offset": offset["ultimo_update_id"] + 1}
+    query = urllib.parse.urlencode(parametros)
+    url_final = url_base + query
+
+    resposta = urllib.request.urlopen(url_final)
+    conteudo_bruto = resposta.read()
+    decodificado = conteudo_bruto.decode("utf-8")
+    dados = json.loads(decodificado)
+
+    return dados["result"]
+
+
+def processar_comandos(app_ids):
+    mensagens = buscar_mensagens_novas()
+    ids_processados = []
+    for mensagem in mensagens:
+        ids_processados.append(mensagem["update_id"])
+        texto = mensagem["message"]["text"]
+        print(f"Comando recebido: {texto}")
+
+        if texto.startswith("/add"):
+            partes = texto.split()
+            try:
+                app_id_texto = partes[1]
+                app_id_numero = int(app_id_texto)
+            except (IndexError, ValueError):
+                print("Comando /add precisa vir com um número. Exemplo: /add 730")
+                continue
+
+            nome_encontrado = buscar_nome_jogo(app_id_numero)
+            if nome_encontrado is not None:
+                app_ids.append({"app_id": app_id_numero, "nome": nome_encontrado})
+                salvar_jogos_monitorados(app_ids)
+                print(f"{nome_encontrado} adicionado via Telegram!")
+            else:
+                print("Não foi possível encontrar esse app_id.")
+        elif texto.startswith("/remove"):
+            partes = texto.split()
+            try:
+                app_id_texto = partes[1]
+                app_id_numero = int(app_id_texto)
+            except (IndexError, ValueError):
+                print("Comando /remove precisa vir com um número. Exemplo: /remove 730")
+                continue
+
+            encontrado = None
+            for jogo in app_ids:
+                if jogo["app_id"] == app_id_numero:
+                    encontrado = jogo
+            if encontrado is not None:
+                app_ids.remove(encontrado)
+                salvar_jogos_monitorados(app_ids)
+                print(f"{encontrado['nome']} removido via Telegram!")
+            else:
+                print("Esse app_id não está na sua lista.")
+        elif texto.startswith("/list"):
+            if not app_ids:
+                enviar_notificacao("Nenhum jogo monitorado ainda.")
+            else:
+                lista_texto = ""
+                for jogo in app_ids:
+                    lista_texto = lista_texto + f"{jogo['app_id']} - {jogo['nome']}\n"
+                enviar_notificacao(lista_texto)
+    if ids_processados:
+        novo_offset = {"ultimo_update_id": max(ids_processados)}
+        salvar_offset(novo_offset)
+
+
 app_ids = carregar_jogos_monitorados()
 historico = carregar_historico()
+processar_comandos(app_ids)
 
 if os.environ.get("GITHUB_ACTIONS"):
     rodar_varredura(app_ids, historico)

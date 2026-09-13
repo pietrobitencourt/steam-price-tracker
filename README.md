@@ -100,5 +100,5 @@ A notificação no Telegram, detectando uma queda de preço:
 
 ## 👤 Autor
 
-**Pietro Bitencourt**
+**Piêtro Bitencourt Nunes**
 [github.com/pietrobitencourt](https://github.com/pietrobitencourt)

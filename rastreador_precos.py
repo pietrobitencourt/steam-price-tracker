@@ -154,17 +154,20 @@ else:
             rodar_varredura(app_ids, historico)
             print("Varredura concluída.")
         elif escolha == "2":
-            try:
-                adicionar_app_id = int(input("Digite o app_id que você quer adicionar: "))
-                nome_encontrado = buscar_nome_jogo(adicionar_app_id)
-                if nome_encontrado is not None:
-                    app_ids.append({"app_id": adicionar_app_id, "nome": nome_encontrado})
-                    salvar_jogos_monitorados(app_ids)
-                    print(f"{nome_encontrado} adicionado com sucesso!")
-                else:
-                    print("Não foi possível encontrar esse app_id.")
-            except ValueError:
-                print("App_Id inválido!")
+            texto_digitado = input("Digite o(s) app_id(s) que você quer adicionar (separados por vírgula): ")
+            pedacos = texto_digitado.split(",")
+            for pedaco in pedacos:
+                try:
+                    adicionar_app_id = int(pedaco.strip())
+                    nome_encontrado = buscar_nome_jogo(adicionar_app_id)
+                    if nome_encontrado is not None:
+                        app_ids.append({"app_id": adicionar_app_id, "nome": nome_encontrado})
+                        salvar_jogos_monitorados(app_ids)
+                        print(f"{nome_encontrado} adicionado com sucesso!")
+                    else:
+                        print("Não foi possível encontrar esse app_id.")
+                except ValueError:
+                    print("App_Id inválido!")
         elif escolha == "3":
             try:
                 remover_jogo = int(input("Digite o app_id que você quer remover: "))

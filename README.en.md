@@ -8,7 +8,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 ![Telegram Bot](https://img.shields.io/badge/Telegram-Bot%20API-26A5E4?logo=telegram&logoColor=white)
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-completed-brightgreen)
 ![Stdlib only](https://img.shields.io/badge/dependencies-standard%20library%20only-success)
 
 </div>

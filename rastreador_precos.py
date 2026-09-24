@@ -21,7 +21,11 @@ def buscar_preco(app_id):
     decodificado = conteudo_bruto.decode("utf-8")
     texto = json.loads(decodificado)
 
-    jogo = texto[str(app_id)]
+    jogo = texto.get(str(app_id), None)
+    if jogo is None:
+        logging.warning(f"Não foi possível obter dados da Steam para o app_id {app_id}.")
+        return
+    
     dados = jogo.get("data")
     nome = dados.get("name")
     preco = dados.get("price_overview")
@@ -43,7 +47,9 @@ def buscar_nome_jogo(app_id):
     decodificado = conteudo_bruto.decode("utf-8")
     texto = json.loads(decodificado)
 
-    jogo = texto[str(app_id)]
+    jogo = texto.get(str(app_id), None)
+    if jogo is None:
+        return None
     dados = jogo.get("data")
     if dados is None:
         return None

@@ -3,6 +3,7 @@ import json
 import urllib.parse
 import logging
 import os
+import time
 
 
 logging.basicConfig(
@@ -127,6 +128,7 @@ def rodar_varredura(app_ids, historico):
     for jogo_monitorado in app_ids:
         app_id = jogo_monitorado["app_id"]
         resultado = buscar_preco(app_id)
+        time.sleep(1)
         if resultado is not None:
             print(f"{resultado['jogo']}: R$ {resultado['preco']}")
             anterior = buscar_anterior(historico, resultado["jogo"])
